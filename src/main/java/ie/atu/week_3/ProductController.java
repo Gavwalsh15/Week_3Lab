@@ -1,5 +1,6 @@
 package ie.atu.week_3;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +13,13 @@ import java.util.List;
 @RequestMapping("/api/products")
 public class ProductController {
     private final ProductService productService;
+
+    private final WarehouseClient warehouseClient;
+
     @Autowired
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, WarehouseClient warehouseClient) {
         this.productService = productService;
+        this.warehouseClient = warehouseClient;
     }
 
 
@@ -24,13 +29,14 @@ public class ProductController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addProduct(@RequestBody Product newProduct) {
+    public String addProduct(@Valid @RequestBody Product newProduct) {
         productService.addProduct(newProduct);
-        return new ResponseEntity<>("Product successfully created\n", HttpStatus.CREATED);
+        String responseFromWarehouse = warehouseClient.storeProduct(newProduct);
+        return "Product successfully created\n" + responseFromWarehouse;
     }
 
     @PutMapping("/edit/{id}")
-    public ResponseEntity<String> editProduct(@PathVariable long id, @RequestBody Product changedProduct) {
+    public ResponseEntity<String> editProduct(@Valid @PathVariable long id, @RequestBody Product changedProduct) {
         boolean status = productService.editProduct(id, changedProduct);
 
         if(status){

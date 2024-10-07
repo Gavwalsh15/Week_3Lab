@@ -1,7 +1,7 @@
 package ie.atu.week_3;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Product {
 
-    @NotNull(message = "ID cannot be NULL")
+    @Min(message = "ID cannot be less than 1", value = 1L)
     private long id;
 
     @NotBlank(message = "Name cannot be Blank")
